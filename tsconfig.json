@@ -1,7 +1,13 @@
 
 {
-  "extends":"../../tsconfig.base.json",
-  "compilerOptions": {},
+  "extends":"../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
