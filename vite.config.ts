@@ -1,21 +1,31 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import { loadCurrentEnv, userConfig as baseUserConfig } from '../../vite.config.base';
+import { ConfigEnv, UserConfig } from 'vite';
+import { userConfig as baseUserConfig, loadCurrentEnv } from '../../../vite.config.base';
 import { wrapperEnv } from '@shared/utils';
+import { resolve as pathResolve, join as pathJoin } from 'path';
 
-// https://vitejs.dev/config/
-export default ({ command, mode }) => {
+export default ({ command }: ConfigEnv): UserConfig => {
   const root = process.cwd();
+
   const currentEnv = loadCurrentEnv(command, root);
   const env = wrapperEnv(currentEnv);
 
-  console.log('root', root, env);
-
-  return defineConfig({
-    plugins: [vue()],
-    base: env.VITE_APP_NAME,
+  return {
+    ...baseUserConfig,
+    base: env.VITE_APP_BASE_URL,
+    resolve: Object.assign({}, baseUserConfig.resolve, {
+      alias: [
+        {
+          find: '@/',
+          replacement: `${pathResolve('src')}/`,
+        },
+        {
+          find: '@root/',
+          replacement: `${pathJoin(__dirname, '..', '..', '/')}`,
+        },
+      ],
+    }),
     server: Object.assign({}, baseUserConfig.server, {
       port: env.VITE_APP_PORT,
     }),
-  });
+  } as UserConfig;
 };
